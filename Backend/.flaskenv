@@ -1,0 +1,2 @@
+FLASK_APP=fps.py
+FLASK_DEBUG=1

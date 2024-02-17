@@ -1,0 +1,6 @@
+pymongo
+no_sql.entities
+flask
+flask-restx
+
+
