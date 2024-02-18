@@ -149,9 +149,9 @@
 <div class="grid place-items-center gap-10 mt-10 mb-40">
     {#each [...results].reverse() as item (item.name + item.url + item.tags)}
         <div class="text-center">
-            <div class="text-2xl text-white mb-3">{item.name}</div>
+			<a href={item.url} class="text-2xl text-white">{item.name}</a>
             <!-- svelte-ignore a11y-missing-attribute -->
-            <embed src={item.url + '?t=' + Date.now()} width="300" height="300"/>
+            <embed src={item.url + '?t=' + Date.now()} width="300" height="300" class="mt-3"/>
 
 			<!-- split by tags-->
 			{#each item.tags.split(' ') as tag}
