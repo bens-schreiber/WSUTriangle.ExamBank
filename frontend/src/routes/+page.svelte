@@ -1,7 +1,28 @@
 <script>
+	// @ts-nocheck
 	let search_bar_engaged = false;
-	const delta_t = new URL("/src/lib/assets/Delta_T.png", import.meta.url).href;
-	const search_input_text = "Search for an exam";
+	const delta_t = new URL('/src/lib/assets/Delta_T.png', import.meta.url).href;
+	const search_input_text = 'Search for an exam';
+
+
+	let results = [];
+
+	async function search(query) {
+		if (query) {
+
+			const response = await fetch(`http://127.0.0.1:5000/exams/search?query=${query}`);
+
+			if (response.ok) {
+				const data = await response.json();
+				results = data;
+			} else {
+				results = [];
+			}
+
+		} else {
+			results = [];
+		}
+	}
 </script>
 
 <div class="mt-10 flex flex-col items-stretch">
@@ -9,12 +30,10 @@
 		<img class="h-52 w-52 self-center" src={delta_t} alt="Delta T" />
 	{/if}
 
-	<!-- Search Bar-->
-	<div class={`mx-4 search-bar ${search_bar_engaged ? "mt-0" : "mt-10"}`}>
+	<div class={`mx-4 search-bar ${search_bar_engaged ? 'mt-0' : 'mt-10'}`}>
 		<form class="max-w-md mx-auto">
-			<label
-				for="default-search"
-				class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label
+			<label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only"
+				>Search</label
 			>
 			<div class="relative">
 				<div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -34,15 +53,16 @@
 						/>
 					</svg>
 				</div>
-                <input
-                    type="search"
-                    id="default-search"
-                    class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-                    placeholder={search_input_text}
-                    required
-                    on:focus={() => search_bar_engaged = true}
-                    on:blur={() => search_bar_engaged = false}
-                />
+				<input
+					type="search"
+					id="default-search"
+					class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+					placeholder={search_input_text}
+					required
+					on:focus={() => (search_bar_engaged = true)}
+					on:blur={() => (search_bar_engaged = false)}
+					on:input={(event) => search(event.target.value)}
+				/>
 				<button
 					type="submit"
 					class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600"
@@ -51,4 +71,8 @@
 			</div>
 		</form>
 	</div>
+
+	{#each [...results].reverse() as item, index (index)}
+		<div>{item.name}</div>
+	{/each}
 </div>

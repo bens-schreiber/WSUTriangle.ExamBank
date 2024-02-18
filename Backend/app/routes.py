@@ -16,8 +16,6 @@ def health_check():
     return Response(status=200)
 
 
-
-
 @swag_from(
     {
         "summary": "Post a exam",
@@ -163,12 +161,14 @@ def search_exam():
         "data"
     )
 
-    distinct_results = exam_collection.find({
-        "$or": [
-            {"data.name": {"$regex": query, "$options": 'i'}},
-            {"data.tags": {"$regex": query, "$options": 'i'}}
-        ]
-    }).distinct("data")
+    distinct_results = exam_collection.find(
+        {
+            "$or": [
+                {"data.name": {"$regex": query, "$options": "i"}},
+                {"data.tags": {"$regex": query, "$options": "i"}},
+            ]
+        }
+    ).distinct("data")
 
     # Limit the results to the top 10
     distinct_results = distinct_results[:10]
@@ -176,3 +176,11 @@ def search_exam():
     # Convert the result to a list of dictionaries
     result = [exam for exam in distinct_results]
     return jsonify(result), 200
+
+@app.after_request
+def after_request(response):
+    header = response.headers
+    header['Access-Control-Allow-Origin'] = '*'
+    header['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    header['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    return response
