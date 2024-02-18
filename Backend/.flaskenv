@@ -1,2 +1,2 @@
-FLASK_APP=fps.py
+FLASK_APP=exam.py
 FLASK_DEBUG=1
