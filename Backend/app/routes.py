@@ -18,15 +18,17 @@ def post_exam():
         if "url" not in request.json:
             return False
         return True
-    
+
     if not validate_request(request):
         return Response(status=400)
-    
+
     # make a uuid
     post_identifier = str(uuid.uuid4())
-    insert_result = exam_collection.insert_one({"_id": post_identifier, "data": str(request.json)})
+    insert_result = exam_collection.insert_one(
+        {"_id": post_identifier, "data": str(request.json)}
+    )
     assert insert_result.inserted_id is not None
-    
+
     return Response(post_identifier, status=201)
-        
+
 
