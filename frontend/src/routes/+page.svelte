@@ -1,7 +1,7 @@
 <script>
 	let search_bar_engaged = false;
-	const delta_t = new URL("/src/lib/assets/Delta_T.png", import.meta.url).href;
-	const search_input_text = "Search for an exam";
+	const delta_t = new URL('/src/lib/assets/Delta_T.png', import.meta.url).href;
+	const search_input_text = 'Search for an exam';
 </script>
 
 <div class="mt-10 flex flex-col items-stretch">
@@ -10,16 +10,15 @@
 	{/if}
 
 	<!-- Search Bar-->
-	<div class={`mx-4 search-bar ${search_bar_engaged ? "mt-0" : "mt-10"}`}>
+	<div class={`mx-4 search-bar ${search_bar_engaged ? 'mt-0' : 'mt-10'}`}>
 		<form class="max-w-md mx-auto">
-			<label
-				for="default-search"
-				class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label
+			<label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only"
+				>Search</label
 			>
 			<div class="relative">
 				<div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
 					<svg
-						class="w-4 h-4 text-gray-500 dark:text-gray-400"
+						class="w-4 h-4 text-gray-400"
 						aria-hidden="true"
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -34,18 +33,18 @@
 						/>
 					</svg>
 				</div>
-                <input
-                    type="search"
-                    id="default-search"
-                    class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-                    placeholder={search_input_text}
-                    required
-                    on:focus={() => search_bar_engaged = true}
-                    on:blur={() => search_bar_engaged = false}
-                />
+				<input
+					type="search"
+					id="default-search"
+					class="block w-full p-4 ps-10 text-sm rounded-lg bg-gray-700 border-gray-600 placeholder-gray-400 text-white outline-none"
+					placeholder={search_input_text}
+					required
+					on:focus={() => (search_bar_engaged = true)}
+					on:blur={() => (search_bar_engaged = false)}
+				/>
 				<button
 					type="submit"
-					class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600"
+					class="text-white absolute end-2.5 bottom-2.5 font-medium rounded-lg text-sm px-4 py-2 bg-blue-600"
 					>Search</button
 				>
 			</div>
