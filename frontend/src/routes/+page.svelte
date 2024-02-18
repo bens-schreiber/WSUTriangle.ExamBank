@@ -1,28 +1,36 @@
 <script>
-	// @ts-nocheck
-	const delta_t = new URL('/src/lib/assets/Delta_T.png', import.meta.url).href;
-	const search_input_text = 'Search for an exam';
+  // @ts-nocheck
+  import { onMount } from 'svelte';
+  const delta_t = new URL('/src/lib/assets/Delta_T.png', import.meta.url).href;
+  const search_input_text = 'Search for an exam or homework...';
 
-	let showModal = false;
+  let showModal = false;
+  let results = [];
+  let query = '';
+  let searchTimeout;
 
-	let results = [];
+  onMount(() => {
+    search(query);
+  });
 
-	async function search(query) {
-		if (query) {
-			const response = await fetch(`http://127.0.0.1:5000/exams/search?query=${query}`);
+  $: if (query) {
+    search(query);
+  }
 
-			if (response.ok) {
-				const data = await response.json();
-				results = data;
-			} else {
+  async function search(query) {
+    if (searchTimeout) clearTimeout(searchTimeout);
 
-				// unload results from the page so they arent cached
-				results = [];
-			}
-		} else {
-			results = [];
-		}
-	}
+    searchTimeout = setTimeout(async () => {
+      const response = await fetch(`http://127.0.0.1:5000/exams/search?query=${query}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        results = data;
+      } else {
+        results = [];
+      }
+    }, 300); // delay in milliseconds
+  }
 
 	let name = '';
 	let tags = '';
@@ -70,7 +78,7 @@
 							type="text"
 							bind:value={tags}
 							required
-							placeholder="Tags"
+							placeholder="CSV Tags"
 							class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
 						/>
 					</label>
@@ -123,7 +131,7 @@
 					/>
 					<button
 						type="submit"
-						class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600"
+						class="text-white absolute end-1.5 bottom-2.5 bg-blue-700 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600"
 						>Search</button
 					>
 				</div>
@@ -139,11 +147,11 @@
 </div>
 
 <div class="grid place-items-center gap-10 mt-10 mb-40">
-    {#each [...results].reverse() as item (item.name)}
+    {#each [...results].reverse() as item (item.name + item.url + item.tags)}
         <div class="text-center">
             <div class="text-2xl text-white mb-3">{item.name}</div>
             <!-- svelte-ignore a11y-missing-attribute -->
-            <embed name={Date.now()} src={item.url + '?t=' + Date.now()} width="300" height="300"/>
+            <embed src={item.url + '?t=' + Date.now()} width="300" height="300"/>
 
 			<!-- split by tags-->
 			{#each item.tags.split(' ') as tag}
