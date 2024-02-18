@@ -15,6 +15,8 @@
 				const data = await response.json();
 				results = data;
 			} else {
+
+				// unload results from the page so they arent cached
 				results = [];
 			}
 		} else {
@@ -29,7 +31,7 @@
 	async function submitForm() {
 		const formData = new FormData();
 		formData.append('name', name);
-		formData.append('tags', tags);
+		formData.append('tags', tags.split(',').map((tag) => tag.trim()).join(' '));
 		formData.append('file', image[0]);
 
 		const response = await fetch('http://127.0.0.1:5000/exam', {
@@ -85,9 +87,7 @@
 		</div>
 	{/if}
 
-
-		<img class="h-52 w-52 self-center" src={delta_t} alt="Delta T" />
-
+	<img class="h-52 w-52 self-center" src={delta_t} alt="Delta T" />
 
 	<div class="mx-4 search-bar mt-10">
 		<div class="flex justify-between max-w-md mx-auto">
@@ -136,8 +136,20 @@
 			</button>
 		</div>
 	</div>
+</div>
 
-	{#each [...results].reverse() as item, index (index)}
-		<div>{item.name}</div>
-	{/each}
+<div class="grid place-items-center gap-10 mt-10 mb-40">
+    {#each [...results].reverse() as item (item.name)}
+        <div class="text-center">
+            <div class="text-2xl text-white mb-3">{item.name}</div>
+            <!-- svelte-ignore a11y-missing-attribute -->
+            <embed name={Date.now()} src={item.url + '?t=' + Date.now()} width="300" height="300"/>
+
+			<!-- split by tags-->
+			{#each item.tags.split(' ') as tag}
+				<span class="text-xs text-white bg-blue-500 rounded-full px-2 py-1 m-1">{tag}</span>
+			{/each}
+
+        </div>
+    {/each}
 </div>
