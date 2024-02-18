@@ -48,6 +48,21 @@ def get_exam():
     
     return Response(result,status=200)
 
+@app.route('/exams/search',methods=["GET"])
+def search_exam():
+    def validate_request(request):
+        return "query" in request.args
+    
+    if not validate_request(request):
+        return Response(status=400)
+    
+    query = request.args["query"]
+    distinct_results = exam_collection.find({ "data": { "$regex": query } }).distinct("data")
+
+    # Convert the result to a list of dictionaries
+    result = [exam for exam in distinct_results]
+    return jsonify(result), 200
+
           
         
         

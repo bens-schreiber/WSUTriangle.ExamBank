@@ -46,3 +46,42 @@ def test_exam_get(client):
 
     assert get_response.status_code == 200
     assert str(post_json) == str(get_response.data.decode("utf-8"))
+
+
+def test_exam_search(client):
+    post_json = {
+        "name": "An Elaborate Exam Name! 42",
+        "tags": ["dog", "cat"],
+        "url": BLOB_IMAGE,
+    }
+    client.post("/exam", json=post_json)
+
+    def assert_search_response(response):
+        assert response.status_code == 200
+        data = eval(response.data.decode("utf-8"))
+        print(data)
+        assert data is not None
+        assert len(data) > 0
+        assert str(post_json) in data
+
+    # We should be able to search for the exam by name
+    search_response = client.get("/exams/search?query=An+Elaborate+Exam+Name!+42")
+    assert_search_response(search_response)
+
+    # We should be able to search for the exam by tag
+    search_response_tag_1 = client.get("/exams/search?query=dog")
+    search_response_tag_2 = client.get("/exams/search?query=cat")
+    assert_search_response(search_response_tag_1)
+    assert_search_response(search_response_tag_2)
+
+    # We should be able to search with a partial query
+    search_response_partial = client.get("/exams/search?query=Elaborate")
+    assert_search_response(search_response_partial)
+
+    # We should be able to search with a partial tag
+    search_response_partial_tag = client.get("/exams/search?query=do")
+    assert_search_response(search_response_partial_tag)
+
+
+
+
