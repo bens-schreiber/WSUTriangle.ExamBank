@@ -5,8 +5,8 @@ from pymongo.collection import Collection
 from app import api
 
 
-@api.route("/test", methods=["GET", "POST"])
-class Test(Resource):
+@api.route("/swaggertest", methods=["GET", "POST"])
+class Swaggertest(Resource):
     def get(self):
         return "Hello, World!"
 
@@ -14,6 +14,6 @@ class Test(Resource):
         return "WORLD HELLO!"
 
 
-@app.route("/test123", methods=["GET"])
-def test123():
+@app.route("/flasktest", methods=["GET"])
+def flasktest():
     return jsonify({"message": "Hello, World!"})

@@ -1,2 +1,8 @@
-To run server -> "Flask Run"
-to run tests -.  "pytest .\tests\test_routes.py"
+to run server:
+cd backend
+cd app
+flask run
+
+to run tests:
+cd backend
+pytest .\tests\tests.py"

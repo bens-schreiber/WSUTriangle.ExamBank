@@ -10,14 +10,15 @@ def client():
         yield client
         
 
-def test_Flask(client):
-    response = client.get('/test123')
+def test_flask(client):
+    response = client.get('/flasktest')
     assert response.status_code == 200
     assert response.get_json() == {'message': 'Hello, World!'}
 
-def test_Swagger(client):
-    response = client.get('/test')
+def test_swagger(client):
+    response = client.get('/swaggertest')
     assert response.status_code == 200
     assert response.get_data(as_text=True) == '"Hello, World!"\n'
+
 
 
