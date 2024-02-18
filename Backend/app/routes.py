@@ -32,3 +32,22 @@ def post_exam():
     return Response(post_identifier, status=201)
 
 
+@app.route('/exam',methods=["GET"])
+def get_exam():
+    def validate_request(request):
+        return "post_identifier"  in request.json
+    
+    if not validate_request(request):
+        print(request.json)
+        return Response(status=400)
+    
+    post_identifier = request.json["post_identifier"]
+    
+    result = exam_collection.find_one({"_id": str(post_identifier)})
+    result = result["data"]
+    
+    return Response(result,status=200)
+
+          
+        
+        

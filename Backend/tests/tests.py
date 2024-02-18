@@ -29,8 +29,20 @@ def test_exam_post(client):
     assert response.status_code == 201
     assert response.data is not None
 
-    post_identifier = response.data.decode('utf-8')
+    post_identifier = response.data.decode("utf-8")
 
     # make sure its in the db
     result = exam_collection.find_one({"_id": str(post_identifier)})
     assert result is not None
+
+
+def test_exam_get(client):
+    post_json = {"name": "test", "tags": ["test"], "url": BLOB_IMAGE}
+    post_response = client.post("/exam", json=post_json)
+
+    post_identifier = post_response.data.decode("utf-8")
+    get_json = {"post_identifier": post_identifier}
+    get_response = client.get("exam", json=get_json)
+
+    assert get_response.status_code == 200
+    assert str(post_json) == str(get_response.data.decode("utf-8"))
