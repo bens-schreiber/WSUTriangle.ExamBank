@@ -1,20 +1,64 @@
 from flask import Response, jsonify, request
 from app import app, db, exam_collection, blob_service
 import uuid
+from flasgger import swag_from
 
 
-@app.route("/flask_test", methods=["GET"])
-def flask_test():
+@swag_from(
+    {
+        "responses": {
+            200: {"description": "Health check passed"},
+        }
+    }
+)
+@app.route("/health_check", methods=["GET"])
+def health_check():
     return Response(status=200)
 
 
+@swag_from(
+    {
+        "summary": "Post a exam",
+        "parameters": [
+            {
+                "name": "file",
+                "in": "formData",
+                "type": "file",
+                "required": True,
+                "description": "The exam to upload.",
+            },
+            {
+                "name": "name",
+                "in": "formData",
+                "type": "string",
+                "required": True,
+                "description": "The name of the exam.",
+            },
+            {
+                "name": "tags",
+                "in": "formData",
+                "description": "The tags of the exam.",
+                "required": False,
+                "type": "array",
+                "items": {"type": "string"},
+            },
+        ],
+        "responses": {
+            201: {
+                "description": "Exam successfully uploaded",
+                "content": {"application/json": {"schema": {"type": "string"}}},
+            },
+            400: {"description": "Bad request if the file, name, or tags are missing."},
+        },
+    }
+)
 @app.route("/exam", methods=["POST"])
 def post_exam():
     def validate_request(request):
         if "file" not in request.files:
             return False
-        if "name" not in request.form or "tags" not in request.form:
-            return False
+        #  if "name" not in request.form or "tags" not in request.form:
+        #      return False
 
         return True
 
@@ -41,6 +85,32 @@ def post_exam():
     return Response(post_identifier, status=201)
 
 
+@swag_from(
+    {
+        "summary": "See a exam",
+        "parameters": [
+            {
+                "name": "post_identifier",
+                "in": "body",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "post_identifier": {
+                            "type": "string",
+                            "description": "The uuid of the exam to retrieve",
+                        }
+                    },
+                },
+            }
+        ],
+        "responses": {
+            201: {
+                "description": "Exam  successfully found",
+                "content": {"application/json": {"schema": {"type": "string"}}},
+            },
+        },
+    }
+)
 @app.route("/exam", methods=["GET"])
 def get_exam():
     def validate_request(request):
@@ -57,6 +127,27 @@ def get_exam():
     return jsonify(result), 200
 
 
+@swag_from(
+    {
+        "parameters": [
+            {
+                "name": "query",
+                "in": "query",
+                "type": "string",
+                "required": True,
+                "description": "The query string to search for exams.",
+            }
+        ],
+        "responses": {
+            200: {
+                "description": "A list of distinct exam results matching the query.",
+                "schema": {"type": "array", "items": {"type": "string"}},
+                "examples": {"result": ["Exam 1", "Exam 2"]},
+            },
+            400: {"description": "Bad request if the query parameter is missing."},
+        },
+    }
+)
 @app.route("/exams/search", methods=["GET"])
 def search_exam():
     def validate_request(request):
@@ -67,12 +158,14 @@ def search_exam():
 
     query = request.args["query"]
 
-    distinct_results = exam_collection.find({
-        "$or": [
-            {"data.name": {"$regex": query, "$options": 'i'}},
-            {"data.tags": {"$regex": query, "$options": 'i'}}
-        ]
-    }).distinct("data")
+    distinct_results = exam_collection.find(
+        {
+            "$or": [
+                {"data.name": {"$regex": query, "$options": "i"}},
+                {"data.tags": {"$regex": query, "$options": "i"}},
+            ]
+        }
+    ).distinct("data")
 
     # Limit the results to the top 10
     distinct_results = distinct_results[:10]

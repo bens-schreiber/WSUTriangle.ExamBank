@@ -1,12 +1,11 @@
 from flask import Flask
-from flask_restx import Api
+from flasgger import Swagger
 from pymongo import MongoClient
 from azure.storage.blob import BlockBlobService
 from config import Config
 
 app = Flask(__name__)
-api = Api(app, version='1.0', title='EXAM API',
-          description='API for Exam backend')
+swagger = Swagger(app)
 
 client = MongoClient('mongodb://root:example@localhost:27017/')
 
