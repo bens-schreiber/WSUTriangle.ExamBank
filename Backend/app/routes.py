@@ -16,7 +16,45 @@ def health_check():
     return Response(status=200)
 
 
-
+@swag_from(
+    {
+        "summary": "Create a new exam entry",
+        "parameters": [
+            {
+                "in": "body",
+                "name": "exam",
+                "description": "The exam data",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The name of the exam",
+                        },
+                        "tags": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "List of tags associated with the exam",
+                        },
+                        "url": {
+                            "type": "string",
+                            "format": "url",
+                            "description": "The URL related to the exam",
+                        },
+                    },
+                    "required": ["name", "url"],
+                },
+            }
+        ],
+        "responses": {
+            201: {
+                "description": "Exam created successfully",
+                "content": {"application/json": {"schema": {"type": "string"}}},
+            },
+            400: {"description": "Bad request. Required fields are missing or invalid"},
+        },
+    }
+)
 @app.route("/exam", methods=["POST"])
 def post_exam():
     def validate_request(request):
@@ -40,21 +78,29 @@ def post_exam():
 
     return Response(post_identifier, status=201)
 
+
 @swag_from(
     {
+        "summary": "Create a new exam entry",
         "parameters": [
             {
-                "in": "query",
-                "name": "exam_id",
-                "description": "The uuid of the exam to retrieve",
-                "type": "string",
-                "required": True,
+                "name": "post_identifier",
+                "in": "body",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "post_identifier": {
+                            "type": "string",
+                            "description": "The uuid of the exam to retrieve",
+                        }
+                    },
+                },
             }
         ],
         "responses": {
-            200: {
-                "description": "Exam retrieved successfully",
-                "content": {"application/json": {"schema": {"type": "object"}}},
+            201: {
+                "description": "Exam created successfully",
+                "content": {"application/json": {"schema": {"type": "string"}}},
             },
         },
     }
@@ -75,35 +121,27 @@ def get_exam():
     return Response(result, status=200)
 
 
-
-@swag_from({
-    "parameters": [
-        {
-            "name": "query",
-            "in": "query",
-            "type": "string",
-            "required": True,
-            "description": "The query string to search for exams."
-        }
-    ],
-    "responses": {
-        200: {
-            "description": "A list of distinct exam results matching the query.",
-            "schema": {
-                "type": "array",
-                "items": {
-                    "type": "string"
-                }
-            },
-            "examples": {
-                "result": ["Exam 1", "Exam 2"]
+@swag_from(
+    {
+        "parameters": [
+            {
+                "name": "query",
+                "in": "query",
+                "type": "string",
+                "required": True,
+                "description": "The query string to search for exams.",
             }
+        ],
+        "responses": {
+            200: {
+                "description": "A list of distinct exam results matching the query.",
+                "schema": {"type": "array", "items": {"type": "string"}},
+                "examples": {"result": ["Exam 1", "Exam 2"]},
+            },
+            400: {"description": "Bad request if the query parameter is missing."},
         },
-        400: {
-            "description": "Bad request if the query parameter is missing."
-        }
     }
-})
+)
 @app.route("/exams/search", methods=["GET"])
 def search_exam():
     def validate_request(request):
