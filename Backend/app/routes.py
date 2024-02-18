@@ -16,42 +16,41 @@ def health_check():
     return Response(status=200)
 
 
+
+
 @swag_from(
     {
-        "summary": "Create a new exam entry",
+        "summary": "Post a exam",
         "parameters": [
             {
-                "in": "body",
-                "name": "exam",
-                "description": "The exam data",
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string",
-                            "description": "The name of the exam",
-                        },
-                        "tags": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                            "description": "List of tags associated with the exam",
-                        },
-                        "url": {
-                            "type": "string",
-                            "format": "url",
-                            "description": "The URL related to the exam",
-                        },
-                    },
-                    "required": ["name", "url"],
-                },
-            }
+                "name": "file",
+                "in": "formData",
+                "type": "file",
+                "required": True,
+                "description": "The exam to upload.",
+            },
+            {
+                "name": "name",
+                "in": "formData",
+                "type": "string",
+                "required": True,
+                "description": "The name of the exam.",
+            },
+            {
+                "name": "tags",
+                "in": "formData",
+                "description": "The tags of the exam.",
+                "required": False,
+                "type": "array",
+                "items": {"type": "string"},
+            },
         ],
         "responses": {
             201: {
-                "description": "Exam created successfully",
+                "description": "Exam successfully uploaded",
                 "content": {"application/json": {"schema": {"type": "string"}}},
             },
-            400: {"description": "Bad request. Required fields are missing or invalid"},
+            400: {"description": "Bad request if the file, name, or tags are missing."},
         },
     }
 )
