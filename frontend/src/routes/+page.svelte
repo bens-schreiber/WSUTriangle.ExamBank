@@ -1,15 +1,16 @@
 <script>
-	let searchBarEngaged = false;
-	const deltaT = new URL('/src/lib/assets/Delta_T.png', import.meta.url).href;
+	let search_bar_engaged = false;
+	const delta_t = new URL("/src/lib/assets/Delta_T.png", import.meta.url).href;
+	const search_input_text = "Search for an exam";
 </script>
 
 <div class="mt-10 flex flex-col items-stretch">
-	{#if !searchBarEngaged}
-		<img class="h-52 w-52 self-center" src={deltaT} alt="Delta T" />
+	{#if !search_bar_engaged}
+		<img class="h-52 w-52 self-center" src={delta_t} alt="Delta T" />
 	{/if}
 
 	<!-- Search Bar-->
-	<div class={`mx-4 search-bar ${searchBarEngaged ? 'mt-0' : 'mt-10'}`}>
+	<div class={`mx-4 search-bar ${search_bar_engaged ? "mt-0" : "mt-10"}`}>
 		<form class="max-w-md mx-auto">
 			<label
 				for="default-search"
@@ -37,10 +38,10 @@
                     type="search"
                     id="default-search"
                     class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-                    placeholder="Search Mockups, Logos..."
+                    placeholder={search_input_text}
                     required
-                    on:focus={() => searchBarEngaged = true}
-                    on:blur={() => searchBarEngaged = false}
+                    on:focus={() => search_bar_engaged = true}
+                    on:blur={() => search_bar_engaged = false}
                 />
 				<button
 					type="submit"
